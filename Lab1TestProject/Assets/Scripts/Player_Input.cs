@@ -20,6 +20,7 @@ public class Player_Input : MonoBehaviour
     // Rotation / look settings
     [SerializeField] private float rotationSpeed = 40.0f; // Horizontal turn speed
     [SerializeField] private float mouseSensY = 5.0f;     // Vertical mouse sensitivity
+    private float camXRotation;                     // Holds the final result of our moveement input for the camera's vertical rotation
 
     // References (auto-validated by KBCore.Refs)
     [SerializeField, Self] private CharacterController controller; // Player controller
@@ -39,6 +40,12 @@ public class Player_Input : MonoBehaviour
         // Requires "Default Input Actions" to be set in Project Settings
         move = InputSystem.actions.FindAction("Player/Move");
         look = InputSystem.actions.FindAction("Player/Look");
+
+        // ---- Lock the mouse inside the game window ---- //
+        //Option 1
+        Cursor.lockState = CursorLockMode.Locked;
+        //Option 2
+        Cursor.visible = false;
 
         // Ensure CharacterController exists
         controller = GetComponent<CharacterController>();
@@ -80,13 +87,13 @@ public class Player_Input : MonoBehaviour
 
         /* ---------------- CAMERA LOOK ---------------- */
 
-        // Accumulate vertical mouse movement
-        mouseSensY = mouseSensY * readLook.y;
+        // Addition of mouse sensitivity and mouse input for vertical rotation (pitch)
+        camXRotation += mouseSensY * readLook.y *Time.deltaTime * -1; //multiply by -1 to get rid of the invertion
 
-        // Clamp vertical rotation so camera doesn't flip
-        mouseSensY = Mathf.Clamp(mouseSensY, -90f, 90f);
+        // Clamp vertical rotation so camera doesn't flip, can be less than 90 if you want to allow some flipping
+        camXRotation = Mathf.Clamp(camXRotation, -90f, 90f);
 
-        // Apply vertical rotation to the camera only
-        cam.transform.localRotation = Quaternion.Euler(-mouseSensY, 0f, 0f);
+        // Apply vertical rotation to the camera only( up and down rotation)
+        cam.transform.localRotation = Quaternion.Euler(camXRotation, 0f, 0f);
     }
 }
