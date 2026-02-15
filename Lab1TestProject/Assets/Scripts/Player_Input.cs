@@ -96,4 +96,9 @@ public class Player_Input : MonoBehaviour
         // Apply vertical rotation to the camera only( up and down rotation)
         cam.transform.localRotation = Quaternion.Euler(camXRotation, 0f, 0f);
     }
+
+    public void ChangeMouseSencibility(float value)
+    {
+        Debug.Log($"Value changed - {value}");
+    }
 }
